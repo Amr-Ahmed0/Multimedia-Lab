@@ -1,0 +1,124 @@
+/* ==========================================================================
+   Multimedia Lab - Responsive Media Queries
+   ========================================================================== */
+
+/* Tablet & Laptop Screens (Max-width: 1024px) */
+@media (max-width: 1024px) {
+  .editor-workspace {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .preview-card {
+    min-height: 380px;
+  }
+
+  .card-body {
+    height: 340px;
+    min-height: 300px;
+  }
+
+  .operations-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Mobile & Small Tablet Screens (Max-width: 768px) */
+@media (max-width: 768px) {
+  :root {
+    --sidebar-width: 240px;
+    --header-height: 58px;
+  }
+
+  /* Off-canvas Mobile Sidebar */
+  .sidebar {
+    transform: translateX(-100%);
+    box-shadow: 4px 0 25px rgba(0, 0, 0, 0.7);
+  }
+
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  /* Full-width Main Wrapper on Mobile */
+  .main-wrapper {
+    margin-left: 0;
+  }
+
+  .mobile-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .top-header {
+    padding: 0 1rem;
+  }
+
+  .content-body {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .workspace-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .preview-card {
+    min-height: 320px;
+  }
+
+  .card-body {
+    height: 300px;
+  }
+
+  .drop-zone {
+    padding: 1.25rem 1rem;
+  }
+
+  .metadata-panel {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .metadata-grid {
+    width: 100%;
+    justify-content: space-between;
+    gap: 0.75rem;
+    border-top: 1px solid var(--border-color);
+    padding-top: 0.6rem;
+  }
+
+  .operations-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Backdrop overlay when mobile sidebar is active */
+  .sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(2px);
+    z-index: 95;
+    opacity: 0;
+    pointer-events: none;
+    transition: var(--transition);
+  }
+
+  .sidebar-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+/* Extra Small Mobile Devices (Max-width: 480px) */
+@media (max-width: 480px) {
+  .operations-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .preset-group {
+    flex-direction: column;
+  }
+}
