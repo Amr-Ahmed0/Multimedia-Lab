@@ -552,12 +552,25 @@ async function processImage(file, operation, options) {
 }
 
 /**
+ * Update disabled state of Apply Operation button based on image and operation availability
+ */
+function updateApplyButtonState() {
+  const applyBtn = document.getElementById('apply-btn');
+  if (!applyBtn) return;
+  const canApply = Boolean(appState.originalImageUrl && appState.selectedOperation && !appState.processing);
+  applyBtn.disabled = !canApply;
+}
+
+/**
  * Initialize Operations Panel Event Listeners
  */
 function initOperations() {
   const opButtons = document.querySelectorAll('.operation-btn');
   const applyBtn = document.getElementById('apply-btn');
   const loadingOverlay = document.getElementById('loading-overlay');
+
+  // Initialize initial button state
+  updateApplyButtonState();
 
   // 1. Operation Selection Handler
   opButtons.forEach(btn => {
@@ -569,6 +582,7 @@ function initOperations() {
       appState.selectedOperation = opKey;
 
       renderDynamicControls(opKey);
+      updateApplyButtonState();
     });
   });
 
@@ -621,7 +635,7 @@ function initOperations() {
       } finally {
         appState.processing = false;
         if (loadingOverlay) loadingOverlay.classList.add('hidden');
-        applyBtn.disabled = false;
+        updateApplyButtonState();
       }
     });
   }

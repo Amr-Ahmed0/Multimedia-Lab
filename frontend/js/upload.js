@@ -72,6 +72,11 @@ function handleFileSelect(file) {
       updateOriginalPreview(file, dataUrl);
     }
 
+    // Refresh apply button state
+    if (typeof updateApplyButtonState === 'function') {
+      updateApplyButtonState();
+    }
+
     if (typeof showToast === 'function') {
       showToast(`Successfully uploaded "${file.name}"`, 'success');
     }
@@ -107,6 +112,14 @@ function initUpload() {
   // Drop zone click triggers file input
   dropZone.addEventListener('click', () => {
     fileInput.click();
+  });
+
+  // Drop zone keyboard interaction (Enter / Space)
+  dropZone.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      fileInput.click();
+    }
   });
 
   // 2. File Input Change Handler

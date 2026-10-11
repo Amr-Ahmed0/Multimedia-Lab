@@ -58,6 +58,8 @@ function updateOriginalPreview(file, dataUrl) {
   originalPreviewImg.classList.remove('hidden');
   originalEmptyState.classList.add('hidden');
   if (clearBtn) clearBtn.style.display = 'inline-flex';
+  const originalBadge = document.getElementById('original-badge');
+  if (originalBadge) originalBadge.classList.remove('hidden');
 
   // Load image object in memory to accurately extract width & height
   const imgLoader = new Image();
@@ -145,9 +147,16 @@ function clearPreviews() {
 
   if (metadataPanel) metadataPanel.classList.add('hidden');
   if (processingBadge) processingBadge.classList.add('hidden');
+  const originalBadge = document.getElementById('original-badge');
+  if (originalBadge) originalBadge.classList.add('hidden');
   if (clearBtn) clearBtn.style.display = 'none';
 
   if (downloadBtn) downloadBtn.disabled = true;
+
+  // Refresh apply button state
+  if (typeof updateApplyButtonState === 'function') {
+    updateApplyButtonState();
+  }
 }
 
 /**
@@ -166,6 +175,10 @@ function initPreview() {
       // Reset file input value
       const fileInput = document.getElementById('file-input');
       if (fileInput) fileInput.value = '';
+
+      if (typeof updateApplyButtonState === 'function') {
+        updateApplyButtonState();
+      }
 
       if (typeof showToast === 'function') {
         showToast('Workspace cleared.', 'success');
