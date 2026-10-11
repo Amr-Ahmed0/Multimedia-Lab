@@ -434,10 +434,6 @@ function playSynthesizedTone(freq, gain) {
     audioState.isPlaying = true;
 
     updatePlayButtonUI(true);
-
-    if (typeof showToast === 'function') {
-      showToast(`Playing sine tone (${freq} Hz tone pitched to ${audibleFreq} Hz for audible speaker output)`, 'info');
-    }
   } catch (err) {
     console.error('Audio playback error:', err);
   }
@@ -458,6 +454,26 @@ function stopSynthesizedTone() {
   }
   audioState.isPlaying = false;
   updatePlayButtonUI(false);
+}
+
+/**
+ * Smoothly update frequency and gain of currently playing tone without restarting or popping
+ */
+function updateSynthesizedAudio(freq, gain) {
+  if (!audioState.isPlaying || !audioState.audioCtx) return;
+  const audibleFreq = freq >= 20 ? freq : freq * 40;
+  const safeVolume = Math.min(Math.max(gain * 0.12, 0.02), 0.35);
+
+  try {
+    if (audioState.oscillatorNode) {
+      audioState.oscillatorNode.frequency.setValueAtTime(audibleFreq, audioState.audioCtx.currentTime);
+    }
+    if (audioState.gainNode) {
+      audioState.gainNode.gain.setValueAtTime(safeVolume, audioState.audioCtx.currentTime);
+    }
+  } catch (e) {
+    console.error('Error updating synthesized audio parameters:', e);
+  }
 }
 
 function updatePlayButtonUI(isPlaying) {
@@ -899,7 +915,7 @@ function initAudioSession() {
       audioState.frequency = parseInt(freqSlider.value, 10) || 5;
       if (freqValText) freqValText.textContent = `${audioState.frequency} Hz`;
       renderAllAudioGraphs();
-      if (audioState.isPlaying) playSynthesizedTone(audioState.frequency, audioState.gain);
+      if (audioState.isPlaying) updateSynthesizedAudio(audioState.frequency, audioState.gain);
     });
   }
 
@@ -937,7 +953,7 @@ function initAudioSession() {
       if (durSlider) durSlider.value = 1.0;
       if (durValText) durValText.textContent = '1.0 s';
       renderAllAudioGraphs();
-      if (audioState.isPlaying) playSynthesizedTone(5, audioState.gain);
+      if (audioState.isPlaying) updateSynthesizedAudio(5, audioState.gain);
     });
   }
 
@@ -949,7 +965,7 @@ function initAudioSession() {
       audioState.gain = parseFloat(gainSlider.value) || 1.0;
       if (gainValText) gainValText.textContent = `${audioState.gain.toFixed(1)}×`;
       renderGainSection();
-      if (audioState.isPlaying) playSynthesizedTone(audioState.frequency, audioState.gain);
+      if (audioState.isPlaying) updateSynthesizedAudio(audioState.frequency, audioState.gain);
     });
   }
 
@@ -965,7 +981,7 @@ function initAudioSession() {
         gainPresets.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         renderGainSection();
-        if (audioState.isPlaying) playSynthesizedTone(audioState.frequency, audioState.gain);
+        if (audioState.isPlaying) updateSynthesizedAudio(audioState.frequency, audioState.gain);
       }
     });
   });
