@@ -107,7 +107,7 @@
               </button>
             </li>
 
-            <!-- Session 02 -->
+            <!-- Session 02 (Digital Images) -->
             <li>
               <button type="button" class="nav-link section-link" role="tab" aria-selected="false"
                 data-section="section-02" id="nav-section-02">
@@ -117,7 +117,7 @@
                   <circle cx="8.5" cy="8.5" r="1.5"></circle>
                   <polyline points="21 15 16 10 5 21"></polyline>
                 </svg>
-                <span class="nav-text">Session 02</span>
+                <span class="nav-text">Digital Images</span>
                 <span class="section-indicator"></span>
               </button>
             </li>
@@ -1002,6 +1002,498 @@
         </div>
 
         <!-- ================================================================ -->
+        <!-- WORKSPACE D: SESSION 02 — DIGITAL IMAGES WITH OPENCV WORKSPACE   -->
+        <!-- ================================================================ -->
+        <div id="section02-workspace" class="section02-workspace hidden">
+
+          <!-- Session 02 Header Banner -->
+          <section class="audio-banner sec2-banner">
+            <div class="audio-banner-top">
+              <div class="audio-banner-info">
+                <span class="course-badge">Multimedia Systems & Programming</span>
+                <h1 class="session-main-title">Session 02: Digital Images with OpenCV</h1>
+                <h2 class="session-sub-title">NumPy Arrays, BGR/RGB Channels, Grayscale, Thresholding, Resizing & Display Parameters</h2>
+                <p class="session-desc">
+                  This session explores digital images as multi-dimensional matrices: pixel coordinate indexing, BGR versus RGB color channels,
+                  luminance conversion (ITU-R 601), binary thresholding (<code>cv2.threshold</code>), spatial resizing (<code>cv2.resize</code>),
+                  orthogonal rotation (<code>cv2.rotate</code>), and scientific visualization with Matplotlib (<code>plt.imshow</code>, colormaps, and axes).
+                </p>
+              </div>
+              <div class="audio-banner-actions">
+                <button type="button" id="btn-sec2-sample-img" class="btn btn-primary" title="Load high-res sample image">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <polyline points="21 15 16 10 5 21"></polyline>
+                  </svg>
+                  <span>Sample Image</span>
+                </button>
+                <button type="button" id="btn-sec2-upload-img" class="btn btn-secondary" title="Upload custom image file">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                  </svg>
+                  <span>Upload Image</span>
+                </button>
+                <input type="file" id="sec2-file-input" class="file-input-hidden" accept="image/png, image/jpeg, image/jpg, image/webp" aria-label="Upload custom image for Section 2">
+                <button type="button" id="btn-sec2-reset" class="btn btn-secondary" title="Reset all Section 2 parameters to curriculum defaults">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                    <path d="M3 3v5h5"></path>
+                  </svg>
+                  <span>Reset Defaults</span>
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <!-- 2-Column Responsive Concepts Grid -->
+          <div class="audio-grid-2col sec2-grid-2col">
+
+            <!-- CONCEPT 1: Read Image & NumPy Array Properties -->
+            <div class="audio-card sec2-card">
+              <div class="audio-card-header">
+                <div>
+                  <h3 class="audio-card-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="3" y1="9" x2="21" y2="9"></line>
+                      <line x1="3" y1="15" x2="21" y2="15"></line>
+                      <line x1="9" y1="3" x2="9" y2="21"></line>
+                      <line x1="15" y1="3" x2="15" y2="21"></line>
+                    </svg>
+                    <span>1. NumPy Array Properties & Pixel Inspection</span>
+                  </h3>
+                  <div class="audio-card-subtitle">3D Tensor: (Height, Width, Channels) • Order: [B, G, R]</div>
+                </div>
+                <span class="concept-tag tag-purple">NumPy Matrix</span>
+              </div>
+
+              <!-- Controls: Pixel Coordinates & Channel Selector -->
+              <div class="audio-controls-row">
+                <div class="form-group flex-1">
+                  <div class="form-label">
+                    <span>Inspect Coordinate (X, Y)</span>
+                    <span id="sec2-coord-label" class="label-value">Click Canvas to Select</span>
+                  </div>
+                  <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <input type="number" id="sec2-pixel-x" class="form-input form-input-sm" value="0" min="0" placeholder="X" style="max-width: 90px;">
+                    <input type="number" id="sec2-pixel-y" class="form-input form-input-sm" value="0" min="0" placeholder="Y" style="max-width: 90px;">
+                  </div>
+                </div>
+                <div class="chip-group" style="margin-bottom: 0.2rem;">
+                  <button type="button" class="preset-chip-btn sec2-channel-btn active" data-channel="all">RGB (All)</button>
+                  <button type="button" class="preset-chip-btn sec2-channel-btn" data-channel="r">Red Channel</button>
+                  <button type="button" class="preset-chip-btn sec2-channel-btn" data-channel="g">Green Channel</button>
+                  <button type="button" class="preset-chip-btn sec2-channel-btn" data-channel="b">Blue Channel</button>
+                </div>
+              </div>
+
+              <!-- Canvas Plot -->
+              <div class="audio-canvas-box sec2-canvas-box">
+                <canvas id="canvas-sec2-matrix" width="600" height="260"></canvas>
+              </div>
+
+              <!-- Metrics Row -->
+              <div class="audio-metrics-row">
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Array Shape (H, W, C)</span>
+                  <span id="sec2-metric-shape" class="audio-metric-val">Loading...</span>
+                </div>
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Data Type</span>
+                  <span id="sec2-metric-dtype" class="audio-metric-val">uint8 (0-255)</span>
+                </div>
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">OpenCV Pixel [B, G, R]</span>
+                  <span id="sec2-metric-bgr" class="audio-metric-val">[0, 0, 0]</span>
+                </div>
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">RGB / Swatch</span>
+                  <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <div id="sec2-swatch" class="sec2-color-swatch"></div>
+                    <span id="sec2-metric-rgb" class="audio-metric-val" style="font-size: 0.78rem;">[0, 0, 0]</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- CONCEPT 2: Grayscale Conversion -->
+            <div class="audio-card sec2-card">
+              <div class="audio-card-header">
+                <div>
+                  <h3 class="audio-card-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M12 2a10 10 0 0 1 0 20z" fill="currentColor"></path>
+                    </svg>
+                    <span>2. Grayscale Conversion (cv2.cvtColor)</span>
+                  </h3>
+                  <div class="audio-card-subtitle">Formula: Gray = 0.299·R + 0.587·G + 0.114·B</div>
+                </div>
+                <span class="concept-tag tag-emerald">Luminance Channel</span>
+              </div>
+
+              <!-- Controls -->
+              <div class="audio-controls-row">
+                <div class="chip-group">
+                  <button type="button" class="preset-chip-btn sec2-gray-btn active" data-mode="standard">Grayscale View</button>
+                  <button type="button" class="preset-chip-btn sec2-gray-btn" data-mode="split">Split Compare (Color ↔ Gray)</button>
+                </div>
+              </div>
+
+              <!-- Canvas Plot -->
+              <div class="audio-canvas-box sec2-canvas-box">
+                <canvas id="canvas-sec2-grayscale" width="600" height="260"></canvas>
+              </div>
+
+              <!-- Metrics Row -->
+              <div class="audio-metrics-row">
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Grayscale Shape (H, W)</span>
+                  <span id="sec2-metric-gray-shape" class="audio-metric-val">Loading...</span>
+                </div>
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Inspected Intensity</span>
+                  <span id="sec2-metric-gray-pixel" class="audio-metric-val">0 / 255</span>
+                </div>
+                <div class="audio-metric-item" style="flex: 1.5;">
+                  <span class="audio-metric-label">Channel Dimensionality</span>
+                  <span id="sec2-metric-gray-channels" class="audio-metric-val">1 Channel (2D Matrix)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- CONCEPT 3: Binary Thresholding -->
+            <div class="audio-card sec2-card">
+              <div class="audio-card-header">
+                <div>
+                  <h3 class="audio-card-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                      <path d="M12 3v18"></path>
+                    </svg>
+                    <span>3. Binary Thresholding (cv2.threshold)</span>
+                  </h3>
+                  <div class="audio-card-subtitle">Criterion: Pixel &gt; T ? 255 (White) : 0 (Black)</div>
+                </div>
+                <span class="concept-tag tag-rose">Segmentation</span>
+              </div>
+
+              <!-- Controls -->
+              <div class="audio-controls-row">
+                <div class="form-group flex-1">
+                  <div class="form-label">
+                    <span>Threshold Value (T)</span>
+                    <span id="sec2-threshold-val" class="label-value">127</span>
+                  </div>
+                  <input type="range" id="sec2-threshold-range" class="form-range" min="0" max="255" step="1" value="127">
+                </div>
+                <div class="chip-group">
+                  <button type="button" class="preset-chip-btn sec2-thresh-preset" data-thresh="64">T = 64 (Low)</button>
+                  <button type="button" class="preset-chip-btn sec2-thresh-preset" data-thresh="100">T = 100 (Lab Task)</button>
+                  <button type="button" class="preset-chip-btn sec2-thresh-preset active" data-thresh="127">T = 127 (Standard)</button>
+                  <button type="button" class="preset-chip-btn sec2-thresh-preset" data-thresh="180">T = 180 (High)</button>
+                </div>
+              </div>
+
+              <!-- Canvas Plot -->
+              <div class="audio-canvas-box sec2-canvas-box">
+                <canvas id="canvas-sec2-binary" width="600" height="260"></canvas>
+              </div>
+
+              <!-- Metrics Row -->
+              <div class="audio-metrics-row">
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Threshold</span>
+                  <span id="sec2-metric-thresh-val" class="audio-metric-val">T = 127</span>
+                </div>
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">White Pixels (255)</span>
+                  <span id="sec2-metric-white-pct" class="audio-metric-val">0%</span>
+                </div>
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Black Pixels (0)</span>
+                  <span id="sec2-metric-black-pct" class="audio-metric-val">0%</span>
+                </div>
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Output Values</span>
+                  <span id="sec2-metric-binary-values" class="audio-metric-val">Strictly {0, 255}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- CONCEPT 4: Image Resizing -->
+            <div class="audio-card sec2-card">
+              <div class="audio-card-header">
+                <div>
+                  <h3 class="audio-card-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="15 3 21 3 21 9"></polyline>
+                      <polyline points="9 21 3 21 3 15"></polyline>
+                      <line x1="21" y1="3" x2="14" y2="10"></line>
+                      <line x1="3" y1="21" x2="10" y2="14"></line>
+                    </svg>
+                    <span>4. Spatial Resizing (cv2.resize)</span>
+                  </h3>
+                  <div class="audio-card-subtitle">OpenCV Order: (Width, Height) • Array: (H, W, C)</div>
+                </div>
+                <span class="concept-tag tag-orange">Spatial Transform</span>
+              </div>
+
+              <!-- Controls -->
+              <div class="audio-controls-row">
+                <div class="form-group flex-1">
+                  <div class="form-label">
+                    <span>Target Size (Width × Height)</span>
+                  </div>
+                  <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <input type="number" id="sec2-resize-w" class="form-input form-input-sm" value="300" min="20" max="2000" placeholder="Width" style="max-width: 90px;">
+                    <span style="color: var(--text-muted);">×</span>
+                    <input type="number" id="sec2-resize-h" class="form-input form-input-sm" value="300" min="20" max="2000" placeholder="Height" style="max-width: 90px;">
+                  </div>
+                </div>
+                <div class="chip-group">
+                  <button type="button" class="preset-chip-btn sec2-resize-preset active" data-w="300" data-h="300">300×300 (Script)</button>
+                  <button type="button" class="preset-chip-btn sec2-resize-preset" data-w="150" data-h="150">150×150 (Lab Task)</button>
+                  <button type="button" class="preset-chip-btn sec2-resize-preset" data-w="200" data-h="200">200×200</button>
+                  <label class="sec2-aspect-check">
+                    <input type="checkbox" id="sec2-lock-aspect"> Lock Ratio
+                  </label>
+                </div>
+              </div>
+
+              <!-- Canvas Plot -->
+              <div class="audio-canvas-box sec2-canvas-box">
+                <canvas id="canvas-sec2-resize" width="600" height="260"></canvas>
+              </div>
+
+              <!-- Metrics Row -->
+              <div class="audio-metrics-row">
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Target (W, H)</span>
+                  <span id="sec2-metric-resize-target" class="audio-metric-val">(W: 300, H: 300)</span>
+                </div>
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Resized Shape (H, W, C)</span>
+                  <span id="sec2-metric-resize-shape" class="audio-metric-val">(300, 300, 3)</span>
+                </div>
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Aspect Ratio (W/H)</span>
+                  <span id="sec2-metric-resize-aspect" class="audio-metric-val">1.00</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- CONCEPT 5: Orthogonal Rotation -->
+            <div class="audio-card sec2-card">
+              <div class="audio-card-header">
+                <div>
+                  <h3 class="audio-card-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path>
+                      <path d="M21 3v5h-5"></path>
+                    </svg>
+                    <span>5. Orthogonal Rotation (cv2.rotate)</span>
+                  </h3>
+                  <div class="audio-card-subtitle">Fixed Angles: 90° CW, 180°, 270° CCW</div>
+                </div>
+                <span class="concept-tag tag-purple">Matrix Rotation</span>
+              </div>
+
+              <!-- Controls -->
+              <div class="audio-controls-row">
+                <div class="chip-group">
+                  <button type="button" class="preset-chip-btn sec2-rot-preset" data-angle="0">0° (Original)</button>
+                  <button type="button" class="preset-chip-btn sec2-rot-preset active" data-angle="90">90° CW</button>
+                  <button type="button" class="preset-chip-btn sec2-rot-preset" data-angle="180">180° Half-Turn</button>
+                  <button type="button" class="preset-chip-btn sec2-rot-preset" data-angle="270">270° CCW</button>
+                </div>
+              </div>
+
+              <!-- Canvas Plot -->
+              <div class="audio-canvas-box sec2-canvas-box">
+                <canvas id="canvas-sec2-rotate" width="600" height="260"></canvas>
+              </div>
+
+              <!-- Metrics Row -->
+              <div class="audio-metrics-row">
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Rotation Angle</span>
+                  <span id="sec2-metric-rotate-angle" class="audio-metric-val">90°</span>
+                </div>
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Rotated Shape (H, W, C)</span>
+                  <span id="sec2-metric-rotate-shape" class="audio-metric-val">Loading...</span>
+                </div>
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Dimensions Status</span>
+                  <span id="sec2-metric-rotate-swap" class="audio-metric-val" style="color: #fbbf24;">Swapped (W ↔ H)</span>
+                </div>
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">OpenCV Constant</span>
+                  <span id="sec2-metric-rotate-const" class="audio-metric-val" style="font-size: 0.75rem;">cv2.ROTATE_90_CLOCKWISE</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- CONCEPT 6: Matplotlib Display Parameters -->
+            <div class="audio-card sec2-card">
+              <div class="audio-card-header">
+                <div>
+                  <h3 class="audio-card-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                      <polyline points="2 17 12 22 22 17"></polyline>
+                      <polyline points="2 12 12 17 22 12"></polyline>
+                    </svg>
+                    <span>6. Matplotlib Display Parameters (plt.imshow)</span>
+                  </h3>
+                  <div class="audio-card-subtitle">Channel Reordering • Colormaps (cmap='gray') • plt.axis('off')</div>
+                </div>
+                <span class="concept-tag tag-emerald">Scientific Plot</span>
+              </div>
+
+              <!-- Controls -->
+              <div class="audio-controls-row">
+                <div class="form-group">
+                  <label class="form-label" for="sec2-mpl-figure-type">Figure</label>
+                  <select id="sec2-mpl-figure-type" class="form-input form-input-sm">
+                    <option value="binary" selected>Binary Image</option>
+                    <option value="gray">Grayscale Image</option>
+                    <option value="color">Color Photo</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="sec2-mpl-colormap">Colormap</label>
+                  <select id="sec2-mpl-colormap" class="form-input form-input-sm">
+                    <option value="gray" selected>cmap='gray' (Correct)</option>
+                    <option value="viridis">viridis (Default False-Color)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="sec2-mpl-color-order">Color Order</label>
+                  <select id="sec2-mpl-color-order" class="form-input form-input-sm">
+                    <option value="RGB" selected>RGB (cv2.COLOR_BGR2RGB)</option>
+                    <option value="BGR">Raw BGR (Inverted Blue Faces)</option>
+                  </select>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.4rem;">
+                  <input type="checkbox" id="sec2-mpl-axis">
+                  <label for="sec2-mpl-axis" style="cursor: pointer;">plt.axis('on') (Grid)</label>
+                </div>
+              </div>
+
+              <!-- Canvas Plot -->
+              <div class="audio-canvas-box sec2-canvas-box">
+                <canvas id="canvas-sec2-matplotlib" width="600" height="260"></canvas>
+              </div>
+
+              <!-- Explanation Box -->
+              <div id="sec2-mpl-explanation" class="audio-info-box">
+                <span style="color: #6EE7B7; font-weight: 600;">✓ Optimal Parameters:</span>
+                Converted to RGB, <code>cmap='gray'</code> enabled, and <code>plt.axis('off')</code> applied for clean borderless presentation.
+              </div>
+            </div>
+
+          </div>
+
+          <!-- CONCEPT 7: Student Lab Exercises & Solutions (Full Width Card) -->
+          <div class="audio-card sec2-card" style="margin-top: 1.5rem;">
+            <div class="audio-card-header">
+              <div>
+                <h3 class="audio-card-title">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                  </svg>
+                  <span>7. Student Lab Exercises & Solutions</span>
+                </h3>
+                <div class="audio-card-subtitle">Interactive verifier matching the tasks in session02_digital_images.py</div>
+              </div>
+              <span class="concept-tag tag-emerald">Python Lab Tasks</span>
+            </div>
+
+            <div class="exercises-grid sec2-tasks-grid">
+
+              <!-- Task 1 -->
+              <div class="task-card">
+                <div class="task-card-header">
+                  <span class="task-num">TASK 1</span>
+                  <h4>Threshold Comparison</h4>
+                </div>
+                <p class="task-desc">
+                  Change threshold to <strong>T = 100</strong> and compare binary output with <strong>T = 127</strong>.
+                </p>
+                <button type="button" id="sec2-btn-verify-task1" class="btn btn-secondary btn-sm">
+                  <span>Verify Task 1</span>
+                </button>
+                <div id="sec2-task1-result" class="exercise-result-box">
+                  Click 'Verify Task 1' to evaluate.
+                </div>
+              </div>
+
+              <!-- Task 2 -->
+              <div class="task-card">
+                <div class="task-card-header">
+                  <span class="task-num">TASK 2</span>
+                  <h4>Resize to (150, 150)</h4>
+                </div>
+                <p class="task-desc">
+                  Resize image to <code>(150, 150)</code> and verify <code>task_resized.shape</code>.
+                </p>
+                <button type="button" id="sec2-btn-verify-task2" class="btn btn-secondary btn-sm">
+                  <span>Verify Task 2</span>
+                </button>
+                <div id="sec2-task2-result" class="exercise-result-box">
+                  Click 'Verify Task 2' to evaluate.
+                </div>
+              </div>
+
+              <!-- Task 3 -->
+              <div class="task-card">
+                <div class="task-card-header">
+                  <span class="task-num">TASK 3</span>
+                  <h4>Rotate 180° vs 90°</h4>
+                </div>
+                <p class="task-desc">
+                  Compare <strong>180°</strong> vs <strong>90°</strong> rotation shapes and analyze dimension transposition.
+                </p>
+                <button type="button" id="sec2-btn-verify-task3" class="btn btn-secondary btn-sm">
+                  <span>Verify Task 3</span>
+                </button>
+                <div id="sec2-task3-result" class="exercise-result-box">
+                  Click 'Verify Task 3' to evaluate.
+                </div>
+              </div>
+
+              <!-- Task 4 -->
+              <div class="task-card">
+                <div class="task-card-header">
+                  <span class="task-num">TASK 4</span>
+                  <h4>Colormap & Axes</h4>
+                </div>
+                <p class="task-desc">
+                  Plot binary result cleanly using <code>cmap='gray'</code> and <code>axis('off')</code>.
+                </p>
+                <button type="button" id="sec2-btn-verify-task4" class="btn btn-secondary btn-sm">
+                  <span>Verify Task 4</span>
+                </button>
+                <div id="sec2-task4-result" class="exercise-result-box">
+                  Click 'Verify Task 4' to evaluate.
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ================================================================ -->
         <!-- WORKSPACE B: EXISTING IMAGE PROCESSING WORKSPACE                 -->
         <!-- ================================================================ -->
         <div id="image-workspace" class="image-workspace hidden">
@@ -1511,6 +2003,7 @@
   <script src="js/upload.js?v=11"></script>
   <script src="js/operations.js?v=11"></script>
   <script src="js/audio.js?v=11"></script>
+  <script src="js/section02.js?v=11"></script>
   <script src="js/app.js?v=11"></script>
 </body>
 

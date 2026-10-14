@@ -8,8 +8,8 @@
 
 // Global Application State Object
 const appState = {
-  activeWorkspace: 'audio', // 'audio' | 'images' | 'section-placeholder'
-  currentSection: 'section-01',
+  activeWorkspace: 'home', // 'home' | 'audio' | 'section02' | 'images' | 'section-placeholder'
+  currentSection: null,
   originalFile: null,
   originalImageUrl: null,
   originalMetadata: null,
@@ -76,11 +76,13 @@ function activateHomeWorkspace() {
   // Toggle workspace containers
   const homeWs = document.getElementById('home-workspace');
   const audioWs = document.getElementById('audio-workspace');
+  const sec2Ws = document.getElementById('section02-workspace');
   const imageWs = document.getElementById('image-workspace');
   const placeholderWs = document.getElementById('section-placeholder');
 
   if (homeWs) homeWs.classList.remove('hidden');
   if (audioWs) audioWs.classList.add('hidden');
+  if (sec2Ws) sec2Ws.classList.add('hidden');
   if (imageWs) imageWs.classList.add('hidden');
   if (placeholderWs) placeholderWs.classList.add('hidden');
 
@@ -121,11 +123,13 @@ function activateAudioWorkspace() {
   // Toggle workspace containers
   const homeWs = document.getElementById('home-workspace');
   const audioWs = document.getElementById('audio-workspace');
+  const sec2Ws = document.getElementById('section02-workspace');
   const imageWs = document.getElementById('image-workspace');
   const placeholderWs = document.getElementById('section-placeholder');
 
   if (homeWs) homeWs.classList.add('hidden');
   if (audioWs) audioWs.classList.remove('hidden');
+  if (sec2Ws) sec2Ws.classList.add('hidden');
   if (imageWs) imageWs.classList.add('hidden');
   if (placeholderWs) placeholderWs.classList.add('hidden');
 
@@ -176,12 +180,14 @@ function activateImageWorkspace() {
   // Toggle workspace containers
   const homeWs = document.getElementById('home-workspace');
   const audioWs = document.getElementById('audio-workspace');
+  const sec2Ws = document.getElementById('section02-workspace');
   const imageWs = document.getElementById('image-workspace');
   const placeholderWs = document.getElementById('section-placeholder');
 
   if (homeWs) homeWs.classList.add('hidden');
   if (imageWs) imageWs.classList.remove('hidden');
   if (audioWs) audioWs.classList.add('hidden');
+  if (sec2Ws) sec2Ws.classList.add('hidden');
   if (placeholderWs) placeholderWs.classList.add('hidden');
 
   // Update Media links active state
@@ -207,6 +213,64 @@ function activateImageWorkspace() {
   const headerStatusText = document.getElementById('header-status-text');
   if (headerSectionTitle) headerSectionTitle.textContent = 'Image Operations';
   if (headerStatusText) headerStatusText.textContent = 'Image Workspace Active';
+
+  closeMobileSidebar();
+}
+
+/**
+ * Switch to Session 02: Digital Images with OpenCV Workspace
+ */
+function activateSection02Workspace() {
+  appState.activeWorkspace = 'section02';
+  appState.currentSection = 'section-02';
+
+  // Toggle workspace containers
+  const homeWs = document.getElementById('home-workspace');
+  const audioWs = document.getElementById('audio-workspace');
+  const sec2Ws = document.getElementById('section02-workspace');
+  const imageWs = document.getElementById('image-workspace');
+  const placeholderWs = document.getElementById('section-placeholder');
+
+  if (homeWs) homeWs.classList.add('hidden');
+  if (audioWs) audioWs.classList.add('hidden');
+  if (sec2Ws) sec2Ws.classList.remove('hidden');
+  if (imageWs) imageWs.classList.add('hidden');
+  if (placeholderWs) placeholderWs.classList.add('hidden');
+
+  // Update Media links active state
+  const navHome = document.getElementById('nav-home');
+  const navImages = document.getElementById('nav-images');
+  const navAudio = document.getElementById('nav-audio');
+  const navHistory = document.getElementById('nav-history');
+
+  if (navHome) navHome.classList.remove('active');
+  if (navImages) navImages.classList.remove('active');
+  if (navAudio) navAudio.classList.remove('active');
+  if (navHistory) navHistory.classList.remove('active');
+
+  // Update Section links active state
+  const sectionLinks = document.querySelectorAll('.nav-link[data-section]');
+  sectionLinks.forEach(link => {
+    const isTarget = link.dataset.section === 'section-02';
+    if (isTarget) {
+      link.classList.add('active');
+      link.setAttribute('aria-selected', 'true');
+    } else {
+      link.classList.remove('active');
+      link.setAttribute('aria-selected', 'false');
+    }
+  });
+
+  // Update Header Title & Breadcrumb
+  const headerSectionTitle = document.getElementById('header-section-title');
+  const headerStatusText = document.getElementById('header-status-text');
+  if (headerSectionTitle) headerSectionTitle.textContent = 'Session 02 — Digital Images';
+  if (headerStatusText) headerStatusText.textContent = 'Session 02 Active • Sinai University';
+
+  // Trigger Section 2 canvas rendering
+  if (typeof renderAllSection02Canvases === 'function') {
+    setTimeout(renderAllSection02Canvases, 50);
+  }
 
   closeMobileSidebar();
 }
@@ -277,18 +341,26 @@ function activateSection(sectionId) {
     return;
   }
 
+  // Session 02 is Digital Images!
+  if (sectionId === 'section-02') {
+    activateSection02Workspace();
+    return;
+  }
+
   appState.activeWorkspace = 'section-placeholder';
   appState.currentSection = sectionId;
 
   // Toggle workspace containers
   const homeWs = document.getElementById('home-workspace');
   const audioWs = document.getElementById('audio-workspace');
+  const sec2Ws = document.getElementById('section02-workspace');
   const imageWs = document.getElementById('image-workspace');
   const placeholderWs = document.getElementById('section-placeholder');
 
   if (homeWs) homeWs.classList.add('hidden');
   if (placeholderWs) placeholderWs.classList.remove('hidden');
   if (audioWs) audioWs.classList.add('hidden');
+  if (sec2Ws) sec2Ws.classList.add('hidden');
   if (imageWs) imageWs.classList.add('hidden');
 
   // Update Media links
@@ -364,6 +436,8 @@ function activateSection(sectionId) {
     prevBtn.onclick = () => {
       if (prevSecNum === 1) {
         activateAudioWorkspace();
+      } else if (prevSecNum === 2) {
+        activateSection02Workspace();
       } else {
         activateSection(prevSectionId);
       }
@@ -376,6 +450,8 @@ function activateSection(sectionId) {
       e.preventDefault();
       if (prevSecNum === 1) {
         activateAudioWorkspace();
+      } else if (prevSecNum === 2) {
+        activateSection02Workspace();
       } else {
         activateSection(prevSectionId);
       }
@@ -666,6 +742,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize Audio Session 01
   if (typeof initAudioSession === 'function') {
     initAudioSession();
+  }
+
+  // Initialize Digital Images Session 02
+  if (typeof initSection02 === 'function') {
+    initSection02();
   }
 
   // Initialize functional Image sub-modules

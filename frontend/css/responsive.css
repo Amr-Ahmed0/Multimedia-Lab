@@ -43,6 +43,15 @@
     grid-template-columns: 1fr;
   }
 
+  /* Section 02 Digital Images Tablet Adaptations */
+  .sec2-grid-2col {
+    grid-template-columns: 1fr;
+  }
+
+  .sec2-tasks-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   /* Home Workspace Tablet Adaptations */
   .home-hero {
     grid-template-columns: 1fr;
@@ -216,6 +225,15 @@
 
   .audio-canvas-box {
     height: 200px;
+  }
+
+  /* Section 02 Digital Images Mobile Adaptations */
+  .sec2-tasks-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sec2-canvas-box {
+    height: 210px;
   }
 }
 
