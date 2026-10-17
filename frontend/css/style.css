@@ -2151,7 +2151,16 @@ button {
   background: linear-gradient(90deg, #38bdf8, #5DD6A0, #f59e0b);
 }
 
+/* Section 02 Concepts 2-Column Grid Container */
+.sec2-grid-2col {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 1.75rem; /* ~28px horizontal spacing between adjacent cards (24px–32px) */
+  row-gap: 1.5rem;    /* ~24px vertical spacing between rows */
+}
+
 .sec2-card {
+  min-width: 0;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 

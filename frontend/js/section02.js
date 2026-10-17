@@ -18,7 +18,9 @@ const sec2State = {
   // Image data & memory
   imgElement: null,
   isLoaded: false,
-  imageSrc: 'assets/images/hero_landscape.jpg',
+  imageSrc: (typeof MULTIMEDIA_LAB_SAMPLE_IMAGE !== 'undefined' && MULTIMEDIA_LAB_SAMPLE_IMAGE) 
+    ? MULTIMEDIA_LAB_SAMPLE_IMAGE 
+    : 'assets/images/hero_landscape.jpg',
   naturalWidth: 0,
   naturalHeight: 0,
   
@@ -87,55 +89,185 @@ function getViridisColor(val) {
 // ============================================================================
 
 /**
+ * Generate an offline procedural landscape canvas if external image loading fails
+ */
+function createProceduralFallback(onComplete) {
+  const w = 640;
+  const h = 480;
+  sec2State.naturalWidth = w;
+  sec2State.naturalHeight = h;
+  sec2State.inspectedX = Math.floor(w / 2);
+  sec2State.inspectedY = Math.floor(h / 2);
+
+  sec2State.originalCanvas = document.createElement('canvas');
+  sec2State.originalCanvas.width = w;
+  sec2State.originalCanvas.height = h;
+  const ctx = sec2State.originalCanvas.getContext('2d');
+  sec2State.originalCtx = ctx;
+
+  // Sky gradient (deep blue to warm cyan/gold)
+  const skyGrad = ctx.createLinearGradient(0, 0, 0, h * 0.6);
+  skyGrad.addColorStop(0, '#1E3A8A');
+  skyGrad.addColorStop(0.6, '#38BDF8');
+  skyGrad.addColorStop(1, '#FDE047');
+  ctx.fillStyle = skyGrad;
+  ctx.fillRect(0, 0, w, h * 0.6);
+
+  // Radiant Sun
+  ctx.beginPath();
+  ctx.arc(w * 0.75, h * 0.25, 45, 0, Math.PI * 2);
+  ctx.fillStyle = '#F59E0B';
+  ctx.fill();
+
+  // Mountain layer 1 (Background distant purple peaks)
+  ctx.beginPath();
+  ctx.moveTo(0, h * 0.55);
+  ctx.lineTo(w * 0.25, h * 0.28);
+  ctx.lineTo(w * 0.55, h * 0.58);
+  ctx.lineTo(w * 0.8, h * 0.32);
+  ctx.lineTo(w, h * 0.52);
+  ctx.lineTo(w, h);
+  ctx.lineTo(0, h);
+  ctx.fillStyle = '#475569';
+  ctx.fill();
+
+  // Mountain layer 2 (Emerald forest foothills)
+  ctx.beginPath();
+  ctx.moveTo(0, h * 0.58);
+  ctx.lineTo(w * 0.35, h * 0.38);
+  ctx.lineTo(w * 0.7, h * 0.62);
+  ctx.lineTo(w, h * 0.45);
+  ctx.lineTo(w, h);
+  ctx.lineTo(0, h);
+  ctx.fillStyle = '#065F46';
+  ctx.fill();
+
+  // Foreground green valley & meadow
+  const groundGrad = ctx.createLinearGradient(0, h * 0.6, 0, h);
+  groundGrad.addColorStop(0, '#059669');
+  groundGrad.addColorStop(1, '#047857');
+  ctx.fillStyle = groundGrad;
+  ctx.fillRect(0, h * 0.6, w, h * 0.4);
+
+  // Winding blue river
+  ctx.beginPath();
+  ctx.moveTo(w * 0.45, h * 0.6);
+  ctx.bezierCurveTo(w * 0.5, h * 0.75, w * 0.2, h * 0.85, w * 0.35, h);
+  ctx.lineTo(w * 0.55, h);
+  ctx.bezierCurveTo(w * 0.4, h * 0.85, w * 0.65, h * 0.75, w * 0.52, h * 0.6);
+  ctx.closePath();
+  ctx.fillStyle = '#2563EB';
+  ctx.fill();
+
+  // Red accent cabin
+  ctx.fillStyle = '#DC2626';
+  ctx.fillRect(w * 0.15, h * 0.68, 40, 28);
+  ctx.beginPath();
+  ctx.moveTo(w * 0.13, h * 0.68);
+  ctx.lineTo(w * 0.15 + 20, h * 0.63);
+  ctx.lineTo(w * 0.15 + 44, h * 0.68);
+  ctx.closePath();
+  ctx.fillStyle = '#991B1B';
+  ctx.fill();
+
+  sec2State.originalImageData = ctx.getImageData(0, 0, w, h);
+  sec2State.isLoaded = true;
+
+  const dummyImg = new Image();
+  dummyImg.src = sec2State.originalCanvas.toDataURL('image/jpeg');
+  sec2State.imgElement = dummyImg;
+
+  // Sync coordinate slider limits
+  const xInput = document.getElementById('sec2-pixel-x');
+  const yInput = document.getElementById('sec2-pixel-y');
+  if (xInput) {
+    xInput.max = sec2State.naturalWidth - 1;
+    xInput.value = sec2State.inspectedX;
+  }
+  if (yInput) {
+    yInput.max = sec2State.naturalHeight - 1;
+    yInput.value = sec2State.inspectedY;
+  }
+
+  renderAllSection02Canvases();
+  if (typeof onComplete === 'function') onComplete();
+}
+
+/**
  * Load image source into memory and prepare offscreen canvas
  */
 function loadSec2Image(src, onComplete) {
+  let effectiveSrc = src;
+  const isDefaultFile = !effectiveSrc || effectiveSrc === 'assets/images/hero_landscape.jpg';
+  
+  if (isDefaultFile && typeof MULTIMEDIA_LAB_SAMPLE_IMAGE !== 'undefined' && MULTIMEDIA_LAB_SAMPLE_IMAGE) {
+    effectiveSrc = MULTIMEDIA_LAB_SAMPLE_IMAGE;
+  }
+
   const img = new Image();
-  img.crossOrigin = 'anonymous';
+
+  // Only set crossOrigin if on HTTP protocol and not a data URL (avoids CORS failure on file://)
+  const isHttp = typeof window !== 'undefined' && window.location && window.location.protocol.startsWith('http');
+  const isDataUrl = typeof effectiveSrc === 'string' && effectiveSrc.startsWith('data:');
+  if (isHttp && !isDataUrl) {
+    img.crossOrigin = 'anonymous';
+  }
+
   img.onload = () => {
-    sec2State.imgElement = img;
-    sec2State.naturalWidth = img.naturalWidth || 800;
-    sec2State.naturalHeight = img.naturalHeight || 600;
-    sec2State.isLoaded = true;
+    try {
+      sec2State.imgElement = img;
+      sec2State.naturalWidth = img.naturalWidth || 800;
+      sec2State.naturalHeight = img.naturalHeight || 600;
+      sec2State.isLoaded = true;
 
-    // Default inspection coordinate at center
-    sec2State.inspectedX = Math.floor(sec2State.naturalWidth / 2);
-    sec2State.inspectedY = Math.floor(sec2State.naturalHeight / 2);
+      // Default inspection coordinate at center
+      sec2State.inspectedX = Math.floor(sec2State.naturalWidth / 2);
+      sec2State.inspectedY = Math.floor(sec2State.naturalHeight / 2);
 
-    // Setup offscreen canvas
-    sec2State.originalCanvas = document.createElement('canvas');
-    sec2State.originalCanvas.width = sec2State.naturalWidth;
-    sec2State.originalCanvas.height = sec2State.naturalHeight;
-    sec2State.originalCtx = sec2State.originalCanvas.getContext('2d');
-    sec2State.originalCtx.drawImage(img, 0, 0);
-    sec2State.originalImageData = sec2State.originalCtx.getImageData(
-      0, 0, sec2State.naturalWidth, sec2State.naturalHeight
-    );
+      // Setup offscreen canvas
+      sec2State.originalCanvas = document.createElement('canvas');
+      sec2State.originalCanvas.width = sec2State.naturalWidth;
+      sec2State.originalCanvas.height = sec2State.naturalHeight;
+      sec2State.originalCtx = sec2State.originalCanvas.getContext('2d');
+      sec2State.originalCtx.drawImage(img, 0, 0);
+      sec2State.originalImageData = sec2State.originalCtx.getImageData(
+        0, 0, sec2State.naturalWidth, sec2State.naturalHeight
+      );
 
-    // Sync coordinate slider limits
-    const xInput = document.getElementById('sec2-pixel-x');
-    const yInput = document.getElementById('sec2-pixel-y');
-    if (xInput) {
-      xInput.max = sec2State.naturalWidth - 1;
-      xInput.value = sec2State.inspectedX;
+      // Sync coordinate slider limits
+      const xInput = document.getElementById('sec2-pixel-x');
+      const yInput = document.getElementById('sec2-pixel-y');
+      if (xInput) {
+        xInput.max = sec2State.naturalWidth - 1;
+        xInput.value = sec2State.inspectedX;
+      }
+      if (yInput) {
+        yInput.max = sec2State.naturalHeight - 1;
+        yInput.value = sec2State.inspectedY;
+      }
+
+      renderAllSection02Canvases();
+      if (typeof onComplete === 'function') onComplete();
+    } catch (err) {
+      console.warn('Canvas getImageData failed (likely tainted canvas on file://), attempting fallback:', err);
+      if (typeof MULTIMEDIA_LAB_SAMPLE_IMAGE !== 'undefined' && MULTIMEDIA_LAB_SAMPLE_IMAGE && effectiveSrc !== MULTIMEDIA_LAB_SAMPLE_IMAGE) {
+        loadSec2Image(MULTIMEDIA_LAB_SAMPLE_IMAGE, onComplete);
+      } else {
+        createProceduralFallback(onComplete);
+      }
     }
-    if (yInput) {
-      yInput.max = sec2State.naturalHeight - 1;
-      yInput.value = sec2State.inspectedY;
-    }
-
-    renderAllSection02Canvases();
-    if (typeof onComplete === 'function') onComplete();
   };
 
   img.onerror = () => {
-    console.error('Failed to load Section 2 image:', src);
-    if (typeof showToast === 'function') {
-      showToast('Could not load Section 2 sample image.', 'error');
+    console.warn('Failed to load Section 2 image from src:', src, 'Attempting embedded sample fallback...');
+    if (typeof MULTIMEDIA_LAB_SAMPLE_IMAGE !== 'undefined' && MULTIMEDIA_LAB_SAMPLE_IMAGE && effectiveSrc !== MULTIMEDIA_LAB_SAMPLE_IMAGE) {
+      loadSec2Image(MULTIMEDIA_LAB_SAMPLE_IMAGE, onComplete);
+    } else {
+      createProceduralFallback(onComplete);
     }
   };
 
-  img.src = src;
+  img.src = effectiveSrc;
 }
 
 /**
@@ -1195,7 +1327,10 @@ function initSection02() {
 
   if (sampleBtn) {
     sampleBtn.addEventListener('click', () => {
-      loadSec2Image('assets/images/hero_landscape.jpg', () => {
+      const targetSrc = (typeof MULTIMEDIA_LAB_SAMPLE_IMAGE !== 'undefined' && MULTIMEDIA_LAB_SAMPLE_IMAGE)
+        ? MULTIMEDIA_LAB_SAMPLE_IMAGE
+        : 'assets/images/hero_landscape.jpg';
+      loadSec2Image(targetSrc, () => {
         if (typeof showToast === 'function') {
           showToast('Sample image loaded for Section 2.', 'success');
         }
@@ -1258,7 +1393,10 @@ function initSection02() {
   }
 
   // Load initial sample image
-  loadSec2Image(sec2State.imageSrc);
+  const initialSrc = (typeof MULTIMEDIA_LAB_SAMPLE_IMAGE !== 'undefined' && MULTIMEDIA_LAB_SAMPLE_IMAGE)
+    ? MULTIMEDIA_LAB_SAMPLE_IMAGE
+    : sec2State.imageSrc;
+  loadSec2Image(initialSrc);
 
   // Resize listener with debounce
   let resizeTimer = null;
