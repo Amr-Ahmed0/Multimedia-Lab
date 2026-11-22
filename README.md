@@ -22,7 +22,7 @@
 |---|---|---|---|---|
 | **Session 01** | **Digital Sound** | Sine waves, Gain control, Nyquist-Shannon sampling ($F_s \ge 2 f_{\max}$), ADC Quantization (Bit Depth), DAC Reconstruction | **Completed** | `session_01_digital_sound.py`, `README.md`, `audio.js` (Web Audio API) |
 | **Session 02** | **Digital Images with OpenCV** | NumPy 3D matrix `(H, W, 3)`, BGR/RGB channels, Grayscale conversion (ITU-R 601), Binary Thresholding, Spatial Resizing, Orthogonal Rotation, Matplotlib (`cmap='gray'`, Viridis) | **Completed** | `session02_digital_images.py`, `test_session02.py`, `README.md`, `section02.js` |
-| **Session 03** | **Color Models & Transformations** | RGB, HSV, CMYK, HSL color spaces and color plane extraction | *Roadmap* | Placeholder UI integrated with bidirectional routing |
+| **Session 03** | **Image Histogram with OpenCV** | Intensity distribution, Manual Counting (`np.zeros`), `cv2.calcHist`, BGR Color Curves, Masking (50:150 ROI & Top-Half), Tasks 1-3 | **Completed** | `section-03.py`, `section03_engine.py`, `test_section03.py`, `README.md`, `section03.js`, FastAPI Router |
 | **Session 04** | **Spatial Filtering & Convolutions** | Gaussian blur, median filters, sharpening kernels, box blur | *Roadmap* | General Image Processing Workspace available |
 | **Session 05** | **Edge Detection & Gradients** | Sobel, Prewitt, Laplacian, Canny edge detection | *Roadmap* | General Image Processing Workspace available |
 | **Session 06** | **Frequency Domain & Fourier Analysis** | 2D DFT, FFT, High-pass/Low-pass frequency filtering | *Roadmap* | Curriculum placeholder |
@@ -50,7 +50,15 @@
 - **Matplotlib Scientific Plot Emulation**: Simulate `plt.imshow` with authentic 256-step Viridis colormap LUT, `cmap='gray'`, raw BGR inverted tint demonstration, and `plt.axis('on'/'off')` axis ticks.
 - **Student Practice Task Verifier**: Automated interactive verification for Tasks 1, 2, 3, and 4 matching `session02_digital_images.py`.
 
-### 🎨 3. Image Processing Workspace
+### 📊 3. Image Histogram Studio (Session 03)
+- **Matrix Dimension Inspector**: Real-time tracking of 2D matrix shape `(H, W)` and flattened 1D array length `(H * W,)` via `gray.ravel()`.
+- **Manual vs. OpenCV calcHist Benchmark**: Visual and numerical comparison between manual bucket loops (`hist_manual = np.zeros(256)`) and optimized `cv2.calcHist`.
+- **Multi-Channel BGR Curves**: Overlaid frequency distribution curves for Blue (Channel 0), Green (Channel 1), and Red (Channel 2) with interactive channel isolation.
+- **Spatial Histogram Masking (ROI)**: Dual-canvas interactive visualizer showing square mask ROI `[50:150, 50:150]` and top-half mask `[:H // 2, :]` alongside isolated region histograms.
+- **Curriculum Task Verifiers**: 1-click verification badges for Task 1 (16-bin histogram), Task 2 (pixel count conservation `hist.sum() == H * W`), and Task 3 (top-half mask).
+- **FastAPI REST API Integration**: Dedicated `/api/section03/` endpoints with headless Matplotlib plot generation.
+
+### 🎨 4. Image Processing Workspace
 - Drag-and-drop file uploader with client-side image validation.
 - Original vs. processed side-by-side preview with zoom and metadata inspector.
 - Filter operations (Grayscale, Invert, Sepia, Blur, Brightness, Contrast, Threshold).
@@ -84,6 +92,7 @@ Multimedia-Lab/
 │   │   ├── app.js                     # Main state manager, routing & workspace activator
 │   │   ├── audio.js                   # Session 01: Digital Sound Web Audio & Canvas visualizer
 │   │   ├── section02.js               # Session 02: Digital Images OpenCV simulator & verifiers
+│   │   ├── section03.js               # Session 03: Image Histogram Canvas visualizers & API client
 │   │   ├── upload.js                  # Drag-and-drop upload handler & validation
 │   │   ├── preview.js                 # Original/result previews & metadata panel
 │   │   ├── operations.js              # Image processing transformations & filters
@@ -91,6 +100,16 @@ Multimedia-Lab/
 │   └── assets/
 │       └── images/                    # Demo images and curriculum sample assets
 │           └── hero_landscape.jpg
+├── backend/                           # FastAPI REST API Backend
+│   ├── main.py                        # FastAPI entry point & CORS configuration
+│   ├── section03_router.py            # Section 03 API endpoints & plot generation
+│   ├── requirements.txt               # Backend Python dependencies
+│   └── README.md                      # Backend setup and integration guide
+├── section-03/                        # Session 03: Image Histogram with Python & OpenCV
+│   ├── section-03.py                  # Reference curriculum Python script
+│   ├── section03_engine.py            # Reusable processing engine for API & unit tests
+│   ├── test_section03.py              # Automated unit tests for Section 03
+│   └── README.md                      # Detailed mathematical formulations & documentation
 ├── processing/                        # Python curriculum modules & algorithms
 │   ├── README.md                      # Overview of Python processing operations & formulas
 │   ├── section-01/                    # Session 01: Digital Sound
@@ -163,6 +182,29 @@ OK
 python processing/section-02/session02_digital_images.py
 ```
 *(On headless environments or terminals, run with `MPLBACKEND=Agg` to prevent GUI blocking).*
+
+### Run Session 03 Automated Unit Tests (Image Histogram)
+```bash
+python -m unittest section-03/test_section03.py
+```
+*Expected output:*
+```text
+.....
+----------------------------------------------------------------------
+Ran 5 tests in 0.180s
+
+OK
+```
+
+### Run Session 03 Curriculum Script
+```bash
+python section-03/section-03.py
+```
+
+### Launch FastAPI Processing Backend
+```bash
+uvicorn backend.main:app --reload --port 8000
+```
 
 ---
 

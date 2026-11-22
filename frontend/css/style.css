@@ -3354,6 +3354,180 @@ select.form-input-sm {
   text-decoration: underline;
 }
 
+/* ==========================================================================
+   SECTION 03 — IMAGE HISTOGRAM WORKSPACE STYLES
+   ========================================================================== */
+
+.section03-workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  animation: fadeInSec3 0.25s ease-out;
+}
+
+@keyframes fadeInSec3 {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sec3-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #FBBF24, #6EE7B7, #38BDF8);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.sec3-banner-badges {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.sec3-meta-pill {
+  display: inline-flex;
+  align-items: center;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.75rem;
+  color: #94A3B8;
+  background: rgba(30, 41, 59, 0.7);
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.sec3-api-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 500;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+}
+
+.sec3-api-badge.badge-online {
+  color: #34D399;
+  background: rgba(52, 211, 153, 0.12);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+}
+
+.sec3-api-badge.badge-offline {
+  color: #94A3B8;
+  background: rgba(148, 163, 184, 0.1);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.sec3-api-badge.badge-checking {
+  color: #FBBF24;
+  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+/* Section 03 Concepts 2-Column Grid Container */
+.sec3-grid-2col {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 1.75rem;
+  row-gap: 1.5rem;
+}
+
+.sec3-card {
+  min-width: 0;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sec3-card:hover {
+  border-color: rgba(251, 191, 36, 0.35);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+
+.sec3-canvas-box {
+  width: 100%;
+  height: 260px;
+  background: #0B0E14;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.sec3-canvas-box canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.sec3-code-note {
+  width: 100%;
+  padding: 0.4rem 0.75rem;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(168, 85, 247, 0.25);
+  border-radius: var(--radius-sm);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.78rem;
+  color: #C084FC;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+/* Dual Mask Preview Layout */
+.sec3-mask-dual-box {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 0.75rem;
+  width: 100%;
+  height: 260px;
+}
+
+.sec3-mask-roi-wrap,
+.sec3-mask-plot-wrap {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #0B0E14;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.sec3-mask-roi-wrap canvas,
+.sec3-mask-plot-wrap canvas {
+  width: 100%;
+  flex: 1;
+  display: block;
+}
+
+.sec3-canvas-caption {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: rgba(15, 20, 28, 0.9);
+  border-top: 1px solid var(--border-color);
+  text-align: center;
+}
+
+/* Tasks 3-Column Grid */
+.sec3-tasks-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
 /* Reduced Motion Accessibility (Requirement 8) */
 @media (prefers-reduced-motion: reduce) {
   *,

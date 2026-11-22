@@ -122,23 +122,18 @@
               </button>
             </li>
 
-            <!-- Session 03 -->
+            <!-- Session 03 (Image Histogram) -->
             <li>
               <button type="button" class="nav-link section-link" role="tab" aria-selected="false"
                 data-section="section-03" id="nav-section-03">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                   stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="4" y1="21" x2="4" y2="14"></line>
-                  <line x1="4" y1="10" x2="4" y2="3"></line>
-                  <line x1="12" y1="21" x2="12" y2="12"></line>
-                  <line x1="12" y1="8" x2="12" y2="3"></line>
-                  <line x1="20" y1="21" x2="20" y2="16"></line>
-                  <line x1="20" y1="12" x2="20" y2="3"></line>
-                  <line x1="1" y1="14" x2="7" y2="14"></line>
-                  <line x1="9" y1="8" x2="15" y2="8"></line>
-                  <line x1="17" y1="16" x2="23" y2="16"></line>
+                  <path d="M3 3v18h18"></path>
+                  <rect x="7" y="10" width="3" height="8" rx="1"></rect>
+                  <rect x="13" y="6" width="3" height="12" rx="1"></rect>
+                  <rect x="19" y="12" width="3" height="6" rx="1"></rect>
                 </svg>
-                <span class="nav-text">Session 03</span>
+                <span class="nav-text">Image Histogram</span>
                 <span class="section-indicator"></span>
               </button>
             </li>
@@ -1494,6 +1489,353 @@
         </div>
 
         <!-- ================================================================ -->
+        <!-- WORKSPACE E: SESSION 03 — IMAGE HISTOGRAM WITH OPENCV           -->
+        <!-- ================================================================ -->
+        <div id="section03-workspace" class="section03-workspace hidden">
+
+          <!-- Session 03 Header Banner -->
+          <section class="audio-banner sec3-banner">
+            <div class="audio-banner-top">
+              <div class="audio-banner-info">
+                <span class="course-badge">Multimedia Systems & Programming</span>
+                <h1 class="session-main-title">Session 03: Image Histogram with Python & OpenCV</h1>
+                <h2 class="session-sub-title">Intensity Distribution, Manual Counting (np.zeros), cv2.calcHist, BGR Color Curves & Masking</h2>
+                <p class="session-desc">
+                  This session demonstrates how digital image histograms model pixel intensity frequencies: flattening 2D matrices <code>(H, W)</code> into 1D arrays <code>(H * W,)</code> with <code>gray.ravel()</code>, comparing manual algorithmic counting via <code>np.zeros(256)</code> against hardware-accelerated <code>cv2.calcHist</code>, analyzing BGR color planes, and applying spatial binary masks for localized feature extraction.
+                </p>
+                <div class="sec3-banner-badges">
+                  <span id="sec3-header-dims" class="sec3-meta-pill">gray.shape: (H, W)</span>
+                  <span id="sec3-header-flat" class="sec3-meta-pill">flat.shape: (H*W,)</span>
+                  <span id="sec3-backend-badge" class="sec3-api-badge badge-checking">Checking Backend...</span>
+                </div>
+              </div>
+              <div class="audio-banner-actions">
+                <button type="button" id="btn-sec3-sample-img" class="btn btn-primary" title="Load curriculum sample image">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <polyline points="21 15 16 10 5 21"></polyline>
+                  </svg>
+                  <span>Sample Image</span>
+                </button>
+                <button type="button" id="btn-sec3-upload-img" class="btn btn-secondary" title="Upload custom image file">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                  </svg>
+                  <span>Upload Image</span>
+                </button>
+                <input type="file" id="sec3-file-input" class="file-input-hidden" accept="image/png, image/jpeg, image/jpg, image/webp" aria-label="Upload custom image for Section 3">
+                <button type="button" id="btn-sec3-reset" class="btn btn-secondary" title="Reset all Section 3 parameters to defaults">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                    <path d="M3 3v5h5"></path>
+                  </svg>
+                  <span>Reset Defaults</span>
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <!-- 2-Column Responsive Concepts Grid -->
+          <div class="audio-grid-2col sec3-grid-2col">
+
+            <!-- CONCEPT 1: Grayscale Histogram (cv2.calcHist & plt.hist) -->
+            <div class="audio-card sec3-card">
+              <div class="audio-card-header">
+                <div>
+                  <h3 class="audio-card-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M3 3v18h18"></path>
+                      <rect x="7" y="10" width="3" height="8" rx="1"></rect>
+                      <rect x="13" y="6" width="3" height="12" rx="1"></rect>
+                      <rect x="19" y="12" width="3" height="6" rx="1"></rect>
+                    </svg>
+                    <span>1. Grayscale Histogram (cv2.calcHist)</span>
+                  </h3>
+                  <div class="audio-card-subtitle">cv2.calcHist([gray], [0], None, [bins], [0, 256])</div>
+                </div>
+                <span class="concept-tag tag-emerald">Intensity Bins</span>
+              </div>
+
+              <!-- Controls: Bin Resolution -->
+              <div class="audio-controls-row">
+                <div class="form-group flex-1">
+                  <div class="form-label">
+                    <span>Histogram Bins (Resolution)</span>
+                    <span class="label-value" id="sec3-bin-label">Select Bins</span>
+                  </div>
+                  <select id="sec3-bin-select" class="form-input form-input-sm" style="max-width: 130px;">
+                    <option value="16">16 Bins (Task 1)</option>
+                    <option value="32">32 Bins</option>
+                    <option value="64">64 Bins</option>
+                    <option value="128">128 Bins</option>
+                    <option value="256" selected>256 Bins (Standard)</option>
+                  </select>
+                </div>
+                <div class="chip-group">
+                  <button type="button" class="preset-chip-btn sec3-bin-preset" data-bins="16">16 Bins</button>
+                  <button type="button" class="preset-chip-btn sec3-bin-preset" data-bins="64">64 Bins</button>
+                  <button type="button" class="preset-chip-btn sec3-bin-preset active" data-bins="256">256 Bins</button>
+                </div>
+              </div>
+
+              <!-- Canvas Plot -->
+              <div class="audio-canvas-box sec3-canvas-box">
+                <canvas id="canvas-sec3-grayscale" width="600" height="260"></canvas>
+              </div>
+
+              <!-- Metrics Row -->
+              <div class="audio-metrics-row">
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Histogram Shape</span>
+                  <span id="sec3-metric-shape" class="audio-metric-val">(256, 1)</span>
+                </div>
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Total Pixels (Sum)</span>
+                  <span id="sec3-metric-total-pixels" class="audio-metric-val">Loading...</span>
+                </div>
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Zero-Value Pixels</span>
+                  <span id="sec3-metric-zero-pixels" class="audio-metric-val">0</span>
+                </div>
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Peak Intensity Count</span>
+                  <span id="sec3-metric-peak-count" class="audio-metric-val">0</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- CONCEPT 2: Manual Counting with np.zeros -->
+            <div class="audio-card sec3-card">
+              <div class="audio-card-header">
+                <div>
+                  <h3 class="audio-card-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="4" y1="21" x2="4" y2="14"></line>
+                      <line x1="4" y1="10" x2="4" y2="3"></line>
+                      <line x1="12" y1="21" x2="12" y2="12"></line>
+                      <line x1="12" y1="8" x2="12" y2="3"></line>
+                      <line x1="20" y1="21" x2="20" y2="16"></line>
+                      <line x1="20" y1="12" x2="20" y2="3"></line>
+                    </svg>
+                    <span>2. Manual Counting Histogram (np.zeros)</span>
+                  </h3>
+                  <div class="audio-card-subtitle">hist_manual = np.zeros(256, dtype=int) • for pixel in row: hist_manual[pixel] += 1</div>
+                </div>
+                <span class="concept-tag tag-purple">Algorithmic Counting</span>
+              </div>
+
+              <div class="audio-controls-row">
+                <div class="sec3-code-note">
+                  <code>for row in gray: for pixel in row: hist_manual[pixel] += 1</code>
+                </div>
+              </div>
+
+              <!-- Canvas Plot -->
+              <div class="audio-canvas-box sec3-canvas-box">
+                <canvas id="canvas-sec3-manual" width="600" height="260"></canvas>
+              </div>
+
+              <!-- Metrics Row -->
+              <div class="audio-metrics-row">
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Array Shape</span>
+                  <span id="sec3-metric-manual-shape" class="audio-metric-val">(256,)</span>
+                </div>
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Bucket Conservation</span>
+                  <span id="sec3-metric-manual-sum" class="audio-metric-val">100% Match</span>
+                </div>
+                <div class="audio-metric-item" style="flex: 1.5;">
+                  <span class="audio-metric-label">Complexity Note</span>
+                  <span class="audio-metric-val" style="font-size: 0.8rem; color: var(--text-secondary);">O(H × W) linear scan matches cv2.calcHist exactly</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- CONCEPT 3: Color Histogram (BGR Channels) -->
+            <div class="audio-card sec3-card">
+              <div class="audio-card-header">
+                <div>
+                  <h3 class="audio-card-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M12 2a10 10 0 0 1 0 20z" fill="currentColor"></path>
+                    </svg>
+                    <span>3. Color Histogram (BGR Channels)</span>
+                  </h3>
+                  <div class="audio-card-subtitle">cv2.calcHist([img], [i], None, [256], [0, 256]) for i in (0:Blue, 1:Green, 2:Red)</div>
+                </div>
+                <span class="concept-tag tag-rose">Color Planes</span>
+              </div>
+
+              <!-- Controls -->
+              <div class="audio-controls-row">
+                <div class="chip-group">
+                  <button type="button" class="preset-chip-btn sec3-channel-btn active" data-channel="all">All Channels (BGR)</button>
+                  <button type="button" class="preset-chip-btn sec3-channel-btn" data-channel="b">Blue Channel</button>
+                  <button type="button" class="preset-chip-btn sec3-channel-btn" data-channel="g">Green Channel</button>
+                  <button type="button" class="preset-chip-btn sec3-channel-btn" data-channel="r">Red Channel</button>
+                </div>
+              </div>
+
+              <!-- Canvas Plot -->
+              <div class="audio-canvas-box sec3-canvas-box">
+                <canvas id="canvas-sec3-color" width="600" height="260"></canvas>
+              </div>
+
+              <!-- Metrics Row -->
+              <div class="audio-metrics-row">
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Blue Curve (Ch 0)</span>
+                  <span class="audio-metric-val" style="color: #38BDF8;">#38BDF8</span>
+                </div>
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Green Curve (Ch 1)</span>
+                  <span class="audio-metric-val" style="color: #4ADE80;">#4ADE80</span>
+                </div>
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Red Curve (Ch 2)</span>
+                  <span class="audio-metric-val" style="color: #F87171;">#F87171</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- CONCEPT 4: Histogram Masking (Specific Regions) -->
+            <div class="audio-card sec3-card">
+              <div class="audio-card-header">
+                <div>
+                  <h3 class="audio-card-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                      <path d="M7 7h10v10H7z"></path>
+                    </svg>
+                    <span>4. Histogram Masking (Specific Regions)</span>
+                  </h3>
+                  <div class="audio-card-subtitle">cv2.calcHist([gray], [0], mask, [256], [0, 256])</div>
+                </div>
+                <span class="concept-tag tag-orange">Spatial ROI</span>
+              </div>
+
+              <!-- Controls -->
+              <div class="audio-controls-row">
+                <div class="chip-group">
+                  <button type="button" class="preset-chip-btn sec3-mask-btn active" data-mask="square">Square ROI (50:150)</button>
+                  <button type="button" class="preset-chip-btn sec3-mask-btn" data-mask="top_half">Top Half (Task 3)</button>
+                </div>
+              </div>
+
+              <!-- Split Dual Canvas Box: Left = Mask Preview on Image, Right = Masked Histogram -->
+              <div class="sec3-mask-dual-box">
+                <div class="sec3-mask-roi-wrap">
+                  <canvas id="canvas-sec3-mask-roi" width="280" height="260"></canvas>
+                  <div class="sec3-canvas-caption">Active Region of Interest (ROI)</div>
+                </div>
+                <div class="sec3-mask-plot-wrap">
+                  <canvas id="canvas-sec3-mask" width="310" height="260"></canvas>
+                  <div class="sec3-canvas-caption">Masked Region Histogram</div>
+                </div>
+              </div>
+
+              <!-- Metrics Row -->
+              <div class="audio-metrics-row">
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Mask Mode</span>
+                  <span id="sec3-metric-mask-type" class="audio-metric-val">Square (50:150)</span>
+                </div>
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Active Mask Pixels</span>
+                  <span id="sec3-metric-mask-pixels" class="audio-metric-val">Loading...</span>
+                </div>
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Image Coverage</span>
+                  <span id="sec3-metric-mask-pct" class="audio-metric-val">0%</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- CONCEPT 5: Student Lab Exercises & Solutions (Full Width Card) -->
+          <div class="audio-card sec3-card" style="margin-top: 1.5rem;">
+            <div class="audio-card-header">
+              <div>
+                <h3 class="audio-card-title">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                  </svg>
+                  <span>5. Student Lab Exercises & Solutions</span>
+                </h3>
+                <div class="audio-card-subtitle">Interactive verifier matching the tasks in section-03.py</div>
+              </div>
+              <span class="concept-tag tag-emerald">Python Lab Tasks</span>
+            </div>
+
+            <div class="exercises-grid sec3-tasks-grid">
+
+              <!-- Task 1 -->
+              <div class="task-card">
+                <div class="task-card-header">
+                  <span class="task-num">TASK 1</span>
+                  <h4>16-Bin Histogram</h4>
+                </div>
+                <p class="task-desc">
+                  Calculate 16-bin histogram using <code>cv2.calcHist([gray], [0], None, [16], [0, 256])</code> and verify shape <code>(16, 1)</code>.
+                </p>
+                <button type="button" id="sec3-btn-verify-task1" class="btn btn-secondary btn-sm">
+                  <span>Verify Task 1</span>
+                </button>
+                <div id="sec3-task1-result" class="exercise-result-box">
+                  Click 'Verify Task 1' to evaluate.
+                </div>
+              </div>
+
+              <!-- Task 2 -->
+              <div class="task-card">
+                <div class="task-card-header">
+                  <span class="task-num">TASK 2</span>
+                  <h4>Pixel Count Conservation</h4>
+                </div>
+                <p class="task-desc">
+                  Verify total histogram count equals total pixels: <code>hist_all.sum() == H * W</code>.
+                </p>
+                <button type="button" id="sec3-btn-verify-task2" class="btn btn-secondary btn-sm">
+                  <span>Verify Task 2</span>
+                </button>
+                <div id="sec3-task2-result" class="exercise-result-box">
+                  Click 'Verify Task 2' to evaluate.
+                </div>
+              </div>
+
+              <!-- Task 3 -->
+              <div class="task-card">
+                <div class="task-card-header">
+                  <span class="task-num">TASK 3</span>
+                  <h4>Top-Half Mask Histogram</h4>
+                </div>
+                <p class="task-desc">
+                  Apply top-half mask: <code>mask_top[:gray.shape[0] // 2, :] = 255</code> and evaluate pixel sum.
+                </p>
+                <button type="button" id="sec3-btn-verify-task3" class="btn btn-secondary btn-sm">
+                  <span>Verify Task 3</span>
+                </button>
+                <div id="sec3-task3-result" class="exercise-result-box">
+                  Click 'Verify Task 3' to evaluate.
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ================================================================ -->
         <!-- WORKSPACE B: EXISTING IMAGE PROCESSING WORKSPACE                 -->
         <!-- ================================================================ -->
         <div id="image-workspace" class="image-workspace hidden">
@@ -2005,6 +2347,7 @@
   <script src="js/operations.js?v=11"></script>
   <script src="js/audio.js?v=11"></script>
   <script src="js/section02.js?v=11"></script>
+  <script src="js/section03.js?v=11"></script>
   <script src="js/app.js?v=11"></script>
 </body>
 

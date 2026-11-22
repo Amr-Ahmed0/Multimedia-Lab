@@ -53,6 +53,16 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
+  /* Section 03 Image Histogram Tablet Adaptations */
+  .sec3-grid-2col {
+    grid-template-columns: 1fr;
+    gap: 1.35rem;
+  }
+
+  .sec3-tasks-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   /* Home Workspace Tablet Adaptations */
   .home-hero {
     grid-template-columns: 1fr;
@@ -239,6 +249,30 @@
   }
 
   .sec2-canvas-box {
+    height: 210px;
+  }
+
+  /* Section 03 Image Histogram Mobile Adaptations */
+  .sec3-grid-2col {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .sec3-mask-dual-box {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .sec3-mask-roi-wrap,
+  .sec3-mask-plot-wrap {
+    height: 220px;
+  }
+
+  .sec3-tasks-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sec3-canvas-box {
     height: 210px;
   }
 }
