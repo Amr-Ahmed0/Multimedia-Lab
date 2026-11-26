@@ -138,7 +138,7 @@
               </button>
             </li>
 
-            <!-- Session 04 -->
+            <!-- Session 04 (Color Models: CMY & CMYK) -->
             <li>
               <button type="button" class="nav-link section-link" role="tab" aria-selected="false"
                 data-section="section-04" id="nav-section-04">
@@ -148,7 +148,7 @@
                   <polyline points="2 17 12 22 22 17"></polyline>
                   <polyline points="2 12 12 17 22 12"></polyline>
                 </svg>
-                <span class="nav-text">Session 04</span>
+                <span class="nav-text">Color Models</span>
                 <span class="section-indicator"></span>
               </button>
             </li>
@@ -1834,7 +1834,216 @@
           </div>
 
         </div>
+<!-- ================================================================ -->
+        <!-- WORKSPACE F: SESSION 04 — COLOR MODELS (CMY & CMYK)              -->
+        <!-- ================================================================ -->
+        <div id="section04-workspace" class="section04-workspace hidden">
 
+          <!-- Header Banner -->
+          <section class="audio-banner">
+            <div class="audio-banner-top">
+              <div class="audio-banner-info">
+                <span class="course-badge">Multimedia Systems & Programming</span>
+                <h1 class="session-main-title">Session 04: Color Models (CMY & CMYK)</h1>
+                <h2 class="session-sub-title">Subtractive Color Space, Printing Ink Separations & RGB Reconstruction</h2>
+                <p class="session-desc">
+                  Explore how additive RGB light converts into subtractive CMY inks (<code>C = 1 - R</code>) and 4-channel printing CMYK plates with black key extraction (<code>K = 1 - max(R, G, B)</code>) and epsilon zero-division protection.
+                </p>
+              </div>
+              <div class="audio-banner-actions">
+                <button type="button" id="btn-sec4-synthetic-img" class="btn btn-primary" title="Load Python synthetic 300x300 RGB blocks">
+                  <span>Synthetic RGB Grid</span>
+                </button>
+                <button type="button" id="btn-sec4-sample-img" class="btn btn-secondary">
+                  <span>Sample Photo</span>
+                </button>
+                <button type="button" id="btn-sec4-upload-img" class="btn btn-secondary">
+                  <span>Upload Image</span>
+                </button>
+                <input type="file" id="sec4-file-input" class="file-input-hidden" accept="image/png, image/jpeg, image/jpg, image/webp">
+              </div>
+            </div>
+          </section>
+
+          <!-- 2-Column Concepts Grid -->
+          <div class="audio-grid-2col">
+
+            <!-- CONCEPT 1: CMY Subtractive Model -->
+            <div class="audio-card">
+              <div class="audio-card-header">
+                <div>
+                  <h3 class="audio-card-title">
+                    <span>1. CMY Color Model (Subtractive — 3 Channels)</span>
+                  </h3>
+                  <div class="audio-card-subtitle">C = 1.0 - R &nbsp;|&nbsp; M = 1.0 - G &nbsp;|&nbsp; Y = 1.0 - B</div>
+                </div>
+                <span class="concept-tag tag-purple">Negative Complement</span>
+              </div>
+
+              <div class="audio-controls-row">
+                <div class="chip-group">
+                  <button type="button" class="preset-chip-btn sec4-cmy-btn active" data-mode="cmy">CMY View</button>
+                  <button type="button" class="preset-chip-btn sec4-cmy-btn" data-mode="split">Split Compare (RGB ↔ CMY)</button>
+                </div>
+              </div>
+
+              <div class="audio-canvas-box">
+                <canvas id="canvas-sec4-cmy" width="600" height="260"></canvas>
+              </div>
+
+              <div class="audio-metrics-row">
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Avg Cyan (C)</span>
+                  <span id="sec4-metric-avg-c" class="audio-metric-val">0%</span>
+                </div>
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Avg Magenta (M)</span>
+                  <span id="sec4-metric-avg-m" class="audio-metric-val">0%</span>
+                </div>
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Avg Yellow (Y)</span>
+                  <span id="sec4-metric-avg-y" class="audio-metric-val">0%</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- CONCEPT 2: CMYK Ink Separations -->
+            <div class="audio-card">
+              <div class="audio-card-header">
+                <div>
+                  <h3 class="audio-card-title">
+                    <span>2. CMYK Printing Ink Separations (4 Channels)</span>
+                  </h3>
+                  <div class="audio-card-subtitle">K = 1 - max(R,G,B) &nbsp;|&nbsp; Darker = More Ink (cmap='gray_r')</div>
+                </div>
+                <span class="concept-tag tag-emerald">Ink Plates</span>
+              </div>
+
+              <div class="audio-controls-row">
+                <div class="chip-group">
+                  <button type="button" class="preset-chip-btn sec4-ink-btn active" data-ink="all">Composite CMYK</button>
+                  <button type="button" class="preset-chip-btn sec4-ink-btn" data-ink="c">Cyan (C)</button>
+                  <button type="button" class="preset-chip-btn sec4-ink-btn" data-ink="m">Magenta (M)</button>
+                  <button type="button" class="preset-chip-btn sec4-ink-btn" data-ink="y">Yellow (Y)</button>
+                  <button type="button" class="preset-chip-btn sec4-ink-btn" data-ink="k">Black (K)</button>
+                </div>
+              </div>
+
+              <div class="audio-canvas-box">
+                <canvas id="canvas-sec4-cmyk" width="600" height="260"></canvas>
+              </div>
+
+              <div class="audio-metrics-row">
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Active Plate</span>
+                  <span id="sec4-metric-plate-name" class="audio-metric-val">Composite CMYK Print</span>
+                </div>
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Avg Black Key (K)</span>
+                  <span id="sec4-metric-avg-k" class="audio-metric-val">0%</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- CONCEPT 3: RGB Reconstruction -->
+            <div class="audio-card">
+              <div class="audio-card-header">
+                <div>
+                  <h3 class="audio-card-title">
+                    <span>3. Reconstructed RGB from CMYK</span>
+                  </h3>
+                  <div class="audio-card-subtitle">RGB = 255 × (1 - C) × (1 - K)</div>
+                </div>
+                <span class="concept-tag tag-orange">Accuracy Check</span>
+              </div>
+
+              <div class="audio-canvas-box">
+                <canvas id="canvas-sec4-reconstruct" width="600" height="260"></canvas>
+              </div>
+
+              <div class="audio-metrics-row">
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Max Channel Error</span>
+                  <span id="sec4-metric-rec-error" class="audio-metric-val">0 / 255</span>
+                </div>
+                <div class="audio-metric-item">
+                  <span class="audio-metric-label">Epsilon Guard</span>
+                  <span class="audio-metric-val">+ 1e-10 (Prevents 0/0 NaN)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- CONCEPT 4: Interactive Single-Pixel Converter -->
+            <div class="audio-card">
+              <div class="audio-card-header">
+                <div>
+                  <h3 class="audio-card-title">
+                    <span>4. Live Single-Pixel RGB → CMYK Converter</span>
+                  </h3>
+                  <div class="audio-card-subtitle">Interactive rgb_to_cmyk(r, g, b) simulator</div>
+                </div>
+                <div id="sec4-pixel-swatch" style="width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--border-color); background: rgb(255,0,0);"></div>
+              </div>
+
+              <div class="audio-controls-row" style="flex-direction: column; gap: 0.6rem;">
+                <div class="form-group" style="width: 100%;">
+                  <div class="form-label"><span>Red (R)</span><span id="sec4-val-r" class="label-value">255</span></div>
+                  <input type="range" id="sec4-slider-r" class="form-range" min="0" max="255" value="255">
+                </div>
+                <div class="form-group" style="width: 100%;">
+                  <div class="form-label"><span>Green (G)</span><span id="sec4-val-g" class="label-value">0</span></div>
+                  <input type="range" id="sec4-slider-g" class="form-range" min="0" max="255" value="0">
+                </div>
+                <div class="form-group" style="width: 100%;">
+                  <div class="form-label"><span>Blue (B)</span><span id="sec4-val-b" class="label-value">0</span></div>
+                  <input type="range" id="sec4-slider-b" class="form-range" min="0" max="255" value="0">
+                </div>
+                <div class="chip-group">
+                  <button type="button" class="preset-chip-btn sec4-color-preset active" data-r="255" data-g="0" data-b="0">Red</button>
+                  <button type="button" class="preset-chip-btn sec4-color-preset" data-r="0" data-g="255" data-b="0">Green</button>
+                  <button type="button" class="preset-chip-btn sec4-color-preset" data-r="0" data-g="0" data-b="255">Blue</button>
+                  <button type="button" class="preset-chip-btn sec4-color-preset" data-r="255" data-g="255" data-b="0">Yellow</button>
+                  <button type="button" class="preset-chip-btn sec4-color-preset" data-r="255" data-g="255" data-b="255">White</button>
+                  <button type="button" class="preset-chip-btn sec4-color-preset" data-r="0" data-g="0" data-b="0">Black</button>
+                </div>
+              </div>
+
+              <div class="audio-metrics-row">
+                <div class="audio-metric-item"><span class="audio-metric-label">Cyan (C)</span><span id="sec4-res-c" class="audio-metric-val">0.00</span></div>
+                <div class="audio-metric-item"><span class="audio-metric-label">Magenta (M)</span><span id="sec4-res-m" class="audio-metric-val">1.00</span></div>
+                <div class="audio-metric-item"><span class="audio-metric-label">Yellow (Y)</span><span id="sec4-res-y" class="audio-metric-val">1.00</span></div>
+                <div class="audio-metric-item"><span class="audio-metric-label">Black (K)</span><span id="sec4-res-k" class="audio-metric-val">0.00</span></div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- CONCEPT 5: Student Practice Task Verifier -->
+          <div class="audio-card" style="margin-top: 1.5rem;">
+            <div class="audio-card-header">
+              <div>
+                <h3 class="audio-card-title">
+                  <span>5. Student Practice Task: Benchmark Colors Verification</span>
+                </h3>
+                <div class="audio-card-subtitle">Verifies rgb_to_cmyk(r, g, b) across all 6 standard benchmark colors from the Python script</div>
+              </div>
+              <span class="concept-tag tag-emerald">Python Lab Task</span>
+            </div>
+
+            <div class="task-card">
+              <p class="task-desc">
+                Test single-pixel conversion on <strong>Pure White, Pure Black, Pure Red, Pure Green, Pure Blue, and Yellow</strong> with epsilon zero-division guard.
+              </p>
+              <button type="button" id="sec4-btn-verify-task1" class="btn btn-secondary btn-sm">
+                <span>Run & Verify Benchmark Table</span>
+              </button>
+              <div id="sec4-task1-result" class="exercise-result-box">
+                Click 'Run & Verify Benchmark Table' to evaluate.
+              </div>
+            </div>
+          </div>
+
+        </div>
         <!-- ================================================================ -->
         <!-- WORKSPACE B: EXISTING IMAGE PROCESSING WORKSPACE                 -->
         <!-- ================================================================ -->
@@ -2348,6 +2557,7 @@
   <script src="js/audio.js?v=11"></script>
   <script src="js/section02.js?v=11"></script>
   <script src="js/section03.js?v=11"></script>
+  <script src="js/section04.js?v=11"></script>
   <script src="js/app.js?v=11"></script>
 </body>
 

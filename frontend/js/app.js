@@ -8,7 +8,7 @@
 
 // Global Application State Object
 const appState = {
-  activeWorkspace: 'home', // 'home' | 'audio' | 'section02' | 'images' | 'section-placeholder'
+  activeWorkspace: 'home', // 'home' | 'audio' | 'section02' | 'section03' | 'section04' | 'images' | 'section-placeholder'
   currentSection: null,
   originalFile: null,
   originalImageUrl: null,
@@ -67,26 +67,34 @@ function closeMobileSidebar() {
 }
 
 /**
+ * Helper to hide all workspaces
+ */
+function hideAllWorkspaces() {
+  const ids = [
+    'home-workspace',
+    'audio-workspace',
+    'section02-workspace',
+    'section03-workspace',
+    'section04-workspace',
+    'image-workspace',
+    'section-placeholder'
+  ];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('hidden');
+  });
+}
+
+/**
  * Switch to Home Workspace (Premium SaaS Landing)
  */
 function activateHomeWorkspace() {
   appState.activeWorkspace = 'home';
   appState.currentSection = null;
 
-  // Toggle workspace containers
+  hideAllWorkspaces();
   const homeWs = document.getElementById('home-workspace');
-  const audioWs = document.getElementById('audio-workspace');
-  const sec2Ws = document.getElementById('section02-workspace');
-  const sec3Ws = document.getElementById('section03-workspace');
-  const imageWs = document.getElementById('image-workspace');
-  const placeholderWs = document.getElementById('section-placeholder');
-
   if (homeWs) homeWs.classList.remove('hidden');
-  if (audioWs) audioWs.classList.add('hidden');
-  if (sec2Ws) sec2Ws.classList.add('hidden');
-  if (sec3Ws) sec3Ws.classList.add('hidden');
-  if (imageWs) imageWs.classList.add('hidden');
-  if (placeholderWs) placeholderWs.classList.add('hidden');
 
   // Update Media & Main links active state
   const navHome = document.getElementById('nav-home');
@@ -122,20 +130,9 @@ function activateAudioWorkspace() {
   appState.activeWorkspace = 'audio';
   appState.currentSection = 'section-01';
 
-  // Toggle workspace containers
-  const homeWs = document.getElementById('home-workspace');
+  hideAllWorkspaces();
   const audioWs = document.getElementById('audio-workspace');
-  const sec2Ws = document.getElementById('section02-workspace');
-  const sec3Ws = document.getElementById('section03-workspace');
-  const imageWs = document.getElementById('image-workspace');
-  const placeholderWs = document.getElementById('section-placeholder');
-
-  if (homeWs) homeWs.classList.add('hidden');
   if (audioWs) audioWs.classList.remove('hidden');
-  if (sec2Ws) sec2Ws.classList.add('hidden');
-  if (sec3Ws) sec3Ws.classList.add('hidden');
-  if (imageWs) imageWs.classList.add('hidden');
-  if (placeholderWs) placeholderWs.classList.add('hidden');
 
   // Update Media links active state
   const navHome = document.getElementById('nav-home');
@@ -152,13 +149,8 @@ function activateAudioWorkspace() {
   const sectionLinks = document.querySelectorAll('.nav-link[data-section]');
   sectionLinks.forEach(link => {
     const isTarget = link.dataset.section === 'section-01';
-    if (isTarget) {
-      link.classList.add('active');
-      link.setAttribute('aria-selected', 'true');
-    } else {
-      link.classList.remove('active');
-      link.setAttribute('aria-selected', 'false');
-    }
+    link.classList.toggle('active', isTarget);
+    link.setAttribute('aria-selected', isTarget ? 'true' : 'false');
   });
 
   // Update Header Title & Breadcrumb
@@ -181,20 +173,9 @@ function activateAudioWorkspace() {
 function activateImageWorkspace() {
   appState.activeWorkspace = 'images';
 
-  // Toggle workspace containers
-  const homeWs = document.getElementById('home-workspace');
-  const audioWs = document.getElementById('audio-workspace');
-  const sec2Ws = document.getElementById('section02-workspace');
-  const sec3Ws = document.getElementById('section03-workspace');
+  hideAllWorkspaces();
   const imageWs = document.getElementById('image-workspace');
-  const placeholderWs = document.getElementById('section-placeholder');
-
-  if (homeWs) homeWs.classList.add('hidden');
   if (imageWs) imageWs.classList.remove('hidden');
-  if (audioWs) audioWs.classList.add('hidden');
-  if (sec2Ws) sec2Ws.classList.add('hidden');
-  if (sec3Ws) sec3Ws.classList.add('hidden');
-  if (placeholderWs) placeholderWs.classList.add('hidden');
 
   // Update Media links active state
   const navHome = document.getElementById('nav-home');
@@ -230,20 +211,9 @@ function activateSection02Workspace() {
   appState.activeWorkspace = 'section02';
   appState.currentSection = 'section-02';
 
-  // Toggle workspace containers
-  const homeWs = document.getElementById('home-workspace');
-  const audioWs = document.getElementById('audio-workspace');
+  hideAllWorkspaces();
   const sec2Ws = document.getElementById('section02-workspace');
-  const sec3Ws = document.getElementById('section03-workspace');
-  const imageWs = document.getElementById('image-workspace');
-  const placeholderWs = document.getElementById('section-placeholder');
-
-  if (homeWs) homeWs.classList.add('hidden');
-  if (audioWs) audioWs.classList.add('hidden');
   if (sec2Ws) sec2Ws.classList.remove('hidden');
-  if (sec3Ws) sec3Ws.classList.add('hidden');
-  if (imageWs) imageWs.classList.add('hidden');
-  if (placeholderWs) placeholderWs.classList.add('hidden');
 
   // Update Media links active state
   const navHome = document.getElementById('nav-home');
@@ -260,13 +230,8 @@ function activateSection02Workspace() {
   const sectionLinks = document.querySelectorAll('.nav-link[data-section]');
   sectionLinks.forEach(link => {
     const isTarget = link.dataset.section === 'section-02';
-    if (isTarget) {
-      link.classList.add('active');
-      link.setAttribute('aria-selected', 'true');
-    } else {
-      link.classList.remove('active');
-      link.setAttribute('aria-selected', 'false');
-    }
+    link.classList.toggle('active', isTarget);
+    link.setAttribute('aria-selected', isTarget ? 'true' : 'false');
   });
 
   // Update Header Title & Breadcrumb
@@ -290,20 +255,9 @@ function activateSection03Workspace() {
   appState.activeWorkspace = 'section03';
   appState.currentSection = 'section-03';
 
-  // Toggle workspace containers
-  const homeWs = document.getElementById('home-workspace');
-  const audioWs = document.getElementById('audio-workspace');
-  const sec2Ws = document.getElementById('section02-workspace');
+  hideAllWorkspaces();
   const sec3Ws = document.getElementById('section03-workspace');
-  const imageWs = document.getElementById('image-workspace');
-  const placeholderWs = document.getElementById('section-placeholder');
-
-  if (homeWs) homeWs.classList.add('hidden');
-  if (audioWs) audioWs.classList.add('hidden');
-  if (sec2Ws) sec2Ws.classList.add('hidden');
   if (sec3Ws) sec3Ws.classList.remove('hidden');
-  if (imageWs) imageWs.classList.add('hidden');
-  if (placeholderWs) placeholderWs.classList.add('hidden');
 
   // Update Media links active state
   const navHome = document.getElementById('nav-home');
@@ -320,13 +274,8 @@ function activateSection03Workspace() {
   const sectionLinks = document.querySelectorAll('.nav-link[data-section]');
   sectionLinks.forEach(link => {
     const isTarget = link.dataset.section === 'section-03';
-    if (isTarget) {
-      link.classList.add('active');
-      link.setAttribute('aria-selected', 'true');
-    } else {
-      link.classList.remove('active');
-      link.setAttribute('aria-selected', 'false');
-    }
+    link.classList.toggle('active', isTarget);
+    link.setAttribute('aria-selected', isTarget ? 'true' : 'false');
   });
 
   // Update Header Title & Breadcrumb
@@ -338,6 +287,50 @@ function activateSection03Workspace() {
   // Trigger Section 3 canvas rendering
   if (typeof renderAllSection03Canvases === 'function') {
     setTimeout(renderAllSection03Canvases, 50);
+  }
+
+  closeMobileSidebar();
+}
+
+/**
+ * Switch to Session 04: Color Models (CMY & CMYK) Workspace
+ */
+function activateSection04Workspace() {
+  appState.activeWorkspace = 'section04';
+  appState.currentSection = 'section-04';
+
+  hideAllWorkspaces();
+  const sec4Ws = document.getElementById('section04-workspace');
+  if (sec4Ws) sec4Ws.classList.remove('hidden');
+
+  // Update Media links active state
+  const navHome = document.getElementById('nav-home');
+  const navImages = document.getElementById('nav-images');
+  const navAudio = document.getElementById('nav-audio');
+  const navHistory = document.getElementById('nav-history');
+
+  if (navHome) navHome.classList.remove('active');
+  if (navImages) navImages.classList.remove('active');
+  if (navAudio) navAudio.classList.remove('active');
+  if (navHistory) navHistory.classList.remove('active');
+
+  // Update Section links active state
+  const sectionLinks = document.querySelectorAll('.nav-link[data-section]');
+  sectionLinks.forEach(link => {
+    const isTarget = link.dataset.section === 'section-04';
+    link.classList.toggle('active', isTarget);
+    link.setAttribute('aria-selected', isTarget ? 'true' : 'false');
+  });
+
+  // Update Header Title & Breadcrumb
+  const headerSectionTitle = document.getElementById('header-section-title');
+  const headerStatusText = document.getElementById('header-status-text');
+  if (headerSectionTitle) headerSectionTitle.textContent = 'Session 04 — Color Models';
+  if (headerStatusText) headerStatusText.textContent = 'Session 04 Active • Sinai University';
+
+  // Trigger Section 4 canvas rendering
+  if (typeof renderAllSection04Canvases === 'function') {
+    setTimeout(renderAllSection04Canvases, 50);
   }
 
   closeMobileSidebar();
@@ -363,10 +356,10 @@ const SESSIONS_DATA = {
   },
   'section-04': {
     number: '04',
-    name: 'Image Operations',
-    progress: '60%',
-    progressText: '60% - In Progress',
-    cards: ['Interactive Python Labs', 'Image Processing Algorithms', 'Visual Demos & Experiments']
+    name: 'Color Models',
+    progress: '100%',
+    progressText: '100% - Completed',
+    cards: ['Interactive Python Labs', 'CMY & CMYK Conversion', 'Ink Separations & Verification']
   },
   'section-05': {
     number: '05',
@@ -421,23 +414,18 @@ function activateSection(sectionId) {
     return;
   }
 
+  // Session 04 is Color Models!
+  if (sectionId === 'section-04') {
+    activateSection04Workspace();
+    return;
+  }
+
   appState.activeWorkspace = 'section-placeholder';
   appState.currentSection = sectionId;
 
-  // Toggle workspace containers
-  const homeWs = document.getElementById('home-workspace');
-  const audioWs = document.getElementById('audio-workspace');
-  const sec2Ws = document.getElementById('section02-workspace');
-  const sec3Ws = document.getElementById('section03-workspace');
-  const imageWs = document.getElementById('image-workspace');
+  hideAllWorkspaces();
   const placeholderWs = document.getElementById('section-placeholder');
-
-  if (homeWs) homeWs.classList.add('hidden');
   if (placeholderWs) placeholderWs.classList.remove('hidden');
-  if (audioWs) audioWs.classList.add('hidden');
-  if (sec2Ws) sec2Ws.classList.add('hidden');
-  if (sec3Ws) sec3Ws.classList.add('hidden');
-  if (imageWs) imageWs.classList.add('hidden');
 
   // Update Media links
   const navHome = document.getElementById('nav-home');
@@ -454,13 +442,8 @@ function activateSection(sectionId) {
   const sectionLinks = document.querySelectorAll('.nav-link[data-section]');
   sectionLinks.forEach(link => {
     const isTarget = link.dataset.section === sectionId;
-    if (isTarget) {
-      link.classList.add('active');
-      link.setAttribute('aria-selected', 'true');
-    } else {
-      link.classList.remove('active');
-      link.setAttribute('aria-selected', 'false');
-    }
+    link.classList.toggle('active', isTarget);
+    link.setAttribute('aria-selected', isTarget ? 'true' : 'false');
   });
 
   // Extract dynamic numerical session info
@@ -482,7 +465,7 @@ function activateSection(sectionId) {
   const dynamicShortTitle = `Session ${padSecNum}`;
   const prevBtnLabel = prevSecNum === 1 ? 'Go back to Session 01' : `Go back to Session ${padPrevSecNum}`;
 
-  // Update Header Title & Breadcrumb (e.g. Multimedia Lab / Session 03)
+  // Update Header Title & Breadcrumb
   const headerSectionTitle = document.getElementById('header-section-title');
   const headerStatusText = document.getElementById('header-status-text');
   if (headerSectionTitle) headerSectionTitle.textContent = dynamicShortTitle;
@@ -516,6 +499,8 @@ function activateSection(sectionId) {
         activateSection02Workspace();
       } else if (prevSecNum === 3) {
         activateSection03Workspace();
+      } else if (prevSecNum === 4) {
+        activateSection04Workspace();
       } else {
         activateSection(prevSectionId);
       }
@@ -532,6 +517,8 @@ function activateSection(sectionId) {
         activateSection02Workspace();
       } else if (prevSecNum === 3) {
         activateSection03Workspace();
+      } else if (prevSecNum === 4) {
+        activateSection04Workspace();
       } else {
         activateSection(prevSectionId);
       }
@@ -832,6 +819,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize Image Histogram Session 03
   if (typeof initSection03 === 'function') {
     initSection03();
+  }
+
+  // Initialize Color Models Session 04
+  if (typeof initSection04 === 'function') {
+    initSection04();
   }
 
   // Initialize functional Image sub-modules
